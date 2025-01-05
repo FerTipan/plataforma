@@ -1,0 +1,106 @@
+{% extends "plantilla.html" %}
+{% block body %}
+<br><br>
+<h3 class="text-center text-danger">Agregar Nueva Clase:</h3><br>
+<style>
+    label{
+        padding: 10px;
+        font-size: 14px;
+        justify-content: center;
+    }
+    .conta{
+        width: 500px;
+        padding: 24px;
+        border-radius: 16px;
+        align-items: center;
+        border: 2px solid rgb(241, 238, 238);
+    }
+</style>
+<div class="container text-center conta"> 
+    <form action="{% url 'guardarClase' %}" id="frm_nueva_clase" method="post" class="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-12">
+                <label class="form-label text-left" for="txt_titulo"><b>Título:</b></label>
+                <input class="form-control" type="text" name="txt_titulo" id="txt_titulo" required><br>
+
+                <label for="txt_descripcion"><b>Descripción:</b></label>
+                <textarea class="form-control" placeholder="Ingresa la descripción" name="txt_descripcion" id="txt_descripcion" required></textarea><br>
+
+                <label class="form-label" for="txt_maestro"><b>Maestro:</b></label>
+                <input type="hidden" name="txt_maestro" id="txt_maestro" value="{{ user.id }}">
+                <p>{{ user.username }}</p>
+
+                <label class="form-label" for="txt_video_url"><b>Video (URL):</b></label>
+                <input class="form-control" type="url" name="txt_video_url" id="txt_video_url"><br>
+
+                <label class="form-label" for="txt_fecha_publicacion"><b>Fecha de Publicación:</b></label>
+                <input class="form-control" type="datetime-local" name="txt_fecha_publicacion" id="txt_fecha_publicacion"><br>
+            </div>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Agregar</button>
+            <a href="{% url 'dashboard_maestro' %}" class="btn btn-danger">Cancelar</a>
+        </div>    
+    </form>
+</div>
+
+<script>
+    $("#frm_nueva_clase").validate({
+    rules: {
+        "txt_titulo": {
+            required: true,
+            minlength: 3,
+            maxlength: 255
+        },
+        "txt_descripcion": {
+            required: true,
+            minlength: 10,
+        },
+        "txt_maestro": {
+            required: true,
+        },
+        "txt_video_url": {
+            required: true,
+            url: true,
+        },
+        "txt_fecha_publicacion": {
+            required: true,
+            date: true
+        },
+    },
+    messages: {
+        "txt_titulo": {
+            required: "Por favor, ingresa un título.",
+            minlength: "El título debe tener al menos 3 caracteres.",
+            maxlength: "El título no puede exceder los 255 caracteres."
+        },
+        "txt_descripcion": {
+            required: "Por favor, ingresa una descripción.",
+            minlength: "La descripción debe tener al menos 10 caracteres.",
+        },
+        "txt_maestro": {
+            required: "Por favor, selecciona un maestro.",
+        },
+        "txt_video_url": {
+            required: "Por favor, ingresa la url del video.",
+            url: "Por favor, ingresa una URL válida."
+        },
+        "txt_fecha_publicacion": {
+            required: "Por favor, ingresa la fecha de publicación.",
+        },
+    },
+    errorClass: "text-danger",
+    errorElement: "small",
+    highlight: function(element) {
+        $(element).addClass("is-invalid");
+    },
+    unhighlight: function(element) {
+        $(element).removeClass("is-invalid");
+    }
+});
+
+</script>
+
+
+{% endblock %}

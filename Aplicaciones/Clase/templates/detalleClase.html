@@ -1,0 +1,189 @@
+{% extends "./plantilla.html" %}
+
+{% load static %}
+{% block body %}
+
+<!-- Header Start -->
+<div class="container-fluid bg-primary py-2 mb-5 page-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <img src="{% static 'img/log.png' %}" alt="Logo" style="height: 50px;" class="img-fluid">
+                <h1 class="display-3 text-white animated slideInDown">Detalle de Clases</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'dashboard_estudiante' %}">Mis Clases</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">{{clase.titulo}}</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Header End 
+<div class="col-lg-12 text-center">
+    <img src="{% static 'img/log.png' %}" alt="Logo" style="height: 50px;" class="img-fluid">
+</div> -->
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p style="text-align: left; color: black;"><strong><img src="{% static 'img/item.png' %}" alt="" width="35" height="35" class="img-fluid">&nbsp;Descripción de la Materia&nbsp;</strong></p>
+            <p>{{ clase.descripcion }}</p>
+            <p style="text-align: left; color: black;"><strong><img src="{% static 'img/write.png' %}" alt="" width="35" height="35" class="img-fluid">&nbsp;Clase impartida por: {{ clase.maestro.username }}&nbsp;</strong></p>
+            <p><b>Fecha de Publicación:</b> {{ clase.fecha_publicacion|date:"d/m/Y H:i" }}</p>
+            
+            <!-- Video -->
+            <div class="mt-4">
+                <p style="text-align: left; color: black;">
+                    <strong>
+                        <img src="{% static 'img/write.png' %}" alt="" width="35" height="35" class="img-fluid">
+                        &nbsp;Clases Grabadas&nbsp;
+                    </strong>
+                </p>
+                {% if clase.video_url %}
+                    <div class="video-container" style="width: 100%; max-width: 400px; aspect-ratio: 16/9; overflow: hidden; position: relative;">
+                        <iframe 
+                            src="https://www.youtube.com/embed/{{ clase.video_url | slice:':11' }}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen 
+                            style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+                        </iframe>
+                    </div>
+                {% else %}
+                    <p>No hay un video disponible para esta clase.</p>
+                {% endif %}
+            </div>
+            
+            <!--<div class="mt-4">
+                <p style="text-align: left; color: black;"><strong><img src="{% static 'img/write.png' %}" alt="" width="35" height="35" class="img-fluid">&nbsp;Clases Grabadas&nbsp;</strong></p>
+                {% if clase.video_url %}
+                    <div class="video-container" style="width: 100%; max-width: 400px; aspect-ratio: 16/9; overflow: hidden; position: relative;">
+                        <iframe 
+                            src="{{ clase.video_url }}" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen
+                            style="width: 100%; height: 100%; position: absolute; top: 0; left: 0;">
+                        </iframe>
+                    </div>
+                {% else %}
+                    <p>No hay un video disponible para esta clase.</p>
+                {% endif %}
+            </div> -->
+            <br>
+            <!-- Materiales -->
+            <div>
+                <p style="text-align: left; color: black;"><strong><img src="{% static 'img/write.png' %}" alt="" width="35" height="35" class="img-fluid">&nbsp;Materiales&nbsp;</strong></p>
+                {% if clase.materiales.all %}
+                    <ul>
+                        {% for material in clase.materiales.all %}
+                            <li>
+                                <b>{{ material.titulo }}</b> 
+                                - <a href="{{ material.archivo.url }}" download>Descargar</a>
+                                <p>{{ material.descripcion }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No hay materiales disponibles para esta clase.</p>
+                {% endif %}
+            </div>
+            
+            <!-- Tareas -->
+            <div class="mt-4">
+                <p style="text-align: left; color: black;">
+                    <strong>
+                        <img src="{% static 'img/item.png' %}" alt="" width="35" height="35" class="img-fluid">
+                        &nbsp;Tareas&nbsp;
+                    </strong>
+                </p>
+                {% if clase.tareas.all %}
+                    <ul>
+                        {% for tarea in clase.tareas.all %}
+                            <li data-tarea-id="{{ tarea.id }}">
+                                <b style="color:black">{{ tarea.titulo }}
+                                - Fecha de Entrega: {{ tarea.fecha_entrega|date:"d/m/Y" }}</b>
+                                <div class="d-flex align-items-center">
+                                    <input type="checkbox" class="form-check-input tarea-checkbox" data-tarea-id="{{ tarea.id }}">
+                                    <label class="form-check-label ms-2 tarea-label" data-tarea-id="{{ tarea.id }}">NO HECHO</label>
+                                </div>
+
+                                <p>{{ tarea.descripcion }}</p>
+
+                                
+                                
+                                {% if not user.es_maestro %}
+                                    <a href="{% url 'realizarTarea' tarea.id %}" class="btn btn-outline-primary">
+                                        Realizar Tarea   
+                                    </a>
+                                    <br><hr>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No hay tareas asignadas para esta clase.</p>
+                {% endif %}
+            </div>
+            <!-- Opciones para Maestros -->
+            {% if es_maestro %}
+                <div class="mt-4">
+                    <h4>Opciones del Maestro</h4>
+                    <a class="btn btn-outline-primary" href="{% url 'nuevoMaterial' clase.id %}">
+                        Agregar Material
+                    </a>
+                    <a class="btn btn-outline-secondary" href="{% url 'nuevaTarea' clase.id %}">
+                        Agregar Tarea
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Botón de Volver -->
+    <div class="mt-4">
+        <a href="{% url 'dashboard_estudiante' %}" class="btn btn-outline-success">Volver</a>
+    </div>
+</div>
+<br>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const checkboxes = document.querySelectorAll('.tarea-checkbox');
+
+        checkboxes.forEach(checkbox => {
+            const tareaId = checkbox.getAttribute('data-tarea-id');
+            const statusLabel = document.querySelector('.tarea-label[data-tarea-id="'+ tareaId +'"]');
+
+            // Detecta cuando se marca el checkbox y cambia el texto
+            checkbox.addEventListener('change', () => {
+                if (checkbox.checked) {
+                    statusLabel.textContent = 'HECHO';
+                    statusLabel.classList.remove('not-done');
+                    statusLabel.classList.add('done');
+                } else {
+                    statusLabel.textContent = 'NO HECHO';
+                    statusLabel.classList.remove('done');
+                    statusLabel.classList.add('not-done');
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .done {
+        color: green;
+        font-weight: bold;
+    }
+
+    .not-done {
+        color: rgb(247, 5, 5);
+        font-weight: bold;
+    }
+
+    .check-box label {
+        margin-left: 10px;
+    }
+</style>
+{% endblock %}

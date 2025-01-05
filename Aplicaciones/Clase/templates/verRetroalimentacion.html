@@ -1,0 +1,36 @@
+{% extends "./plantilla.html" %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Retroalimentación de la Entrega</h1>
+    <a href="{% url 'detalleTarea' entrega.tarea.id %}" class="btn btn-outline-success">Volver</a><br><br>
+    <p><strong>Estudiante:</strong> {{ entrega.estudiante.last_name }} {{ entrega.estudiante.first_name }}</p>
+    <p><strong>Tarea:</strong> {{ entrega.tarea.titulo }}</p>
+    <p><strong>Clase:</strong> {{ entrega.tarea.clase }}</p>
+    <hr>
+    {% if retroalimentaciones %}
+        <ul class="list-group">
+            {% for retro in retroalimentaciones %}
+                <li class="list-group-item">
+                    <p><strong>Maestro:</strong> {{ retro.maestro.username }}</p>
+                    <p><strong>Comentario:</strong> {{ retro.comentario }}</p>
+                    <p><strong>Fecha:</strong> {{ retro.fecha_retroalimentacion|date:"d/m/Y H:i" }}</p>
+                    {% if retro.maestro == request.user %}
+                        <div class="mt-2">
+                            <a href="{% url 'editarRetroalimentacion' retro.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <form method="post" action="{% url 'eliminarRetroalimentacion' retro.id %}" style="display:inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay retroalimentaciones para esta entrega.</p>
+    {% endif %}
+    
+</div>
+<br>
+{% endblock %}

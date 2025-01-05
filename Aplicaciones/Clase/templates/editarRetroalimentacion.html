@@ -1,0 +1,49 @@
+{% extends "./plantilla.html" %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Editar Retroalimentación</h1>
+    <p><strong>Estudiante:</strong> {{ retroalimentacion.entrega.estudiante.last_name }}&nbsp;{{ retroalimentacion.entrega.estudiante.first_name }}</p>
+    <p><strong>Tarea:</strong> {{ retroalimentacion.entrega.tarea.titulo }}</p>
+    <p><strong>Clase:</strong> {{ retroalimentacion.entrega.tarea.clase }}</p>
+    <hr>
+    <a href="{% url 'verRetroalimentacion' retroalimentacion.entrega.id %}" class="btn btn-outline-success">Volver</a>
+    <br><br>
+    <form method="post" id="frm_edit_retro">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="comentario" class="form-label"><strong>Comentario:</strong></label>
+            <textarea name="comentario" id="comentario" class="form-control" rows="5" required>{{ retroalimentacion.comentario }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <a href="{% url 'verRetroalimentacion' retroalimentacion.entrega.id %}" class="btn btn-danger">Cancelar</a>
+
+    </form>
+</div>
+<br><br>
+<script>
+    $("#frm_edit_retro").validate({
+    rules: {
+        "comentario": {
+            required: true,
+            minlength: 10,
+        },
+    },
+    messages: {
+        "comentario": {
+            required: "Por favor, ingresa una retroalimentacion para el estudiante.",
+            minlength: "Debe tener al menos 3 caracteres.",
+        },
+    },
+    errorClass: "text-danger",
+    errorElement: "small",
+    highlight: function(element) {
+        $(element).addClass("is-invalid");
+    },
+    unhighlight: function(element) {
+        $(element).removeClass("is-invalid");
+    }
+});
+
+</script>
+{% endblock %}

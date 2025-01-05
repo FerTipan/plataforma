@@ -1,0 +1,51 @@
+{% extends "./plantilla.html" %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Retroalimentar Entrega</h1>
+    <p><strong>Estudiante: </strong>{{ entrega.estudiante.last_name }} {{ entrega.estudiante.first_name }}</p>
+    <p><strong>Tarea:</strong> {{ entrega.tarea.titulo }}</p>
+    <p><strong>Entrega del Estudiante:</strong> {{ entrega.comentario|default:"Sin comentario" }}</p>
+    {% if entrega.archivo %}
+        <b style="color:rgb(111, 112, 112)">Ver:</b>&nbsp;<a href="{{ entrega.archivo.url }}" target="_blank">{{ entrega.archivo.name }}</a>
+        <p><a href="{{ entrega.archivo.url }}" download class="btn btn-warning btn-sm">Descargar</a>
+    {% else %} 
+        <b>Ningún archivo</b>
+    {% endif %}
+    <hr>
+    <form method="post" id="frm_creat_retro">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="retroalimentacion" class="form-label">Comentario de Retroalimentación:</label>
+            <textarea name="retroalimentacion" id="retroalimentacion" class="form-control" rows="4" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar Retroalimentación</button>
+        <a href="{% url 'detalleTarea' entrega.tarea.id %}" class="btn btn-danger">Cancelar</a>
+    </form>
+</div>
+<br><br>
+<script>
+    $("#frm_creat_retro").validate({
+    rules: {
+        "retroalimentacion": {
+            required: true,
+            minlength: 10,
+        },
+    },
+    messages: {
+        "retroalimentacion": {
+            required: "Por favor, ingresa el comentario de retroalimentacion para el estudiante.",
+            minlength: "Debe tener al menos 3 caracteres.",
+        },
+    },
+    errorClass: "text-danger",
+    errorElement: "small",
+    highlight: function(element) {
+        $(element).addClass("is-invalid");
+    },
+    unhighlight: function(element) {
+        $(element).removeClass("is-invalid");
+    }
+});
+</script>
+{% endblock %}

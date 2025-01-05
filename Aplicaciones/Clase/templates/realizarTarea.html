@@ -1,0 +1,132 @@
+{% extends "./plantilla.html" %}
+
+{% load static %}
+{% block body %}
+<div class="container-fluid bg-primary py-2 mb-5 page-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <img src="{% static 'img/log.png' %}" alt="Logo" style="height: 50px;" class="img-fluid">
+                <h1 class="display-3 text-white animated slideInDown">Tarea</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'dashboard_estudiante' %}">Mis Clases</a></li>
+                        <li class="breadcrumb-item text-white">
+                            <a class="text-white" href="{% url 'detalleClase' tarea.clase.id %}">{{ tarea.clase.titulo }}</a>
+                        </li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">{{tarea.titulo}}</li>
+
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<style>label{color:black;}</style>
+<div class="container mt-5">
+    <h2>{{ tarea.titulo }}</h2>
+    <hr>
+    <p><strong>Descripción:</strong> {{ tarea.descripcion }}</p>
+    <hr>
+    <form method="post" action="{% url 'realizarTarea' tarea.id %}" id="frm_do_task" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% if entrega %}
+            <b class="text-danger mb-3">Edite el campo necesario y guarde aqui</b><br>
+        {% endif %}
+        <button type="submit" class="btn btn-primary">
+            {% if entrega %}
+                Editar Entrega
+            {% else %}
+                Entregar
+            {% endif %}
+        </button>
+        {% if entrega %}
+            <button type="submit" name="eliminar" class="btn btn-danger">Borrar Entrega</button>
+        {% endif %}
+        <br><br>
+        <div class="mb-3">
+            <label for="comentario">Realización de Tarea</label>
+            <textarea id="comentario" name="comentario" class="form-control" rows="4">
+                {% if entrega %}
+                    {{ entrega.comentario }}
+                {% else %}
+                    ""
+                {% endif %}
+            </textarea>
+        </div>
+        <div class="mb-3">
+            <label for="archivo">Archivo<b class="text-danger">(Opcional)</b></label>
+            <input type="file" id="archivo" name="archivo" class="form-control">
+            {% if entrega and entrega.archivo %}
+                <p>Archivo actual: <a href="{{ entrega.archivo.url }}" target="_blank">{{ entrega.archivo.name }}</a></p>
+            
+                {% endif %}
+        </div>
+    </form>
+    <br>
+    <h2>Detalles de Entrega</h2>
+    <hr>
+    <div class="table-responsive">
+    <table class="table table-bordared table-hover">
+        <thead>
+            <tr class="table-dark">
+                <th>Ítems</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><b>Fecha Cierre</b></td>
+                <td>
+                    {% if tarea %}
+                        {{ tarea.fecha_entrega }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td><b>Fecha de Envio</b></td>
+                <td>
+                    {% if entrega %}
+                        {{ entrega.fecha_entrega }}
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td class="text-danger"><b>Retroalimentación</b></td>
+                <td>
+                    {% if entrega and entrega.retroalimentaciones.exists %}
+                        <p>{{ entrega.retroalimentaciones.last.comentario }}</p>
+                        <b>Fecha de Retroalimentación:</b><p>{{ entrega.retroalimentaciones.last.fecha_retroalimentacion}}</p>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+</div>
+<br>
+<script>
+    $("#frm_do_task").validate({
+    rules: {
+        "comentario": {
+            required: true,
+            minlength: 100,
+        },
+    },
+    messages: {
+        "comentario": {
+            required: "Por favor, ingresa la tarea.",
+            minlength: "La tarea debe tener al menos 100 caracteres.",
+        },
+    },
+    errorClass: "text-danger",
+    errorElement: "small",
+    highlight: function(element) {
+        $(element).addClass("is-invalid");
+    },
+    unhighlight: function(element) {
+        $(element).removeClass("is-invalid");
+    }
+});
+</script>
+{% endblock %}

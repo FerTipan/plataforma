@@ -1,0 +1,54 @@
+{% extends "./plantilla.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <h2>Detalles de la Tarea {{tarea.id}}: {{ tarea.titulo }}</h2>
+    <a href="{% url 'listaTareas' tarea.clase.id %}" class="btn btn-outline-success mt-3">Volver</a>
+    <br><br>
+    <p><strong>Descripción de la Tarea:</strong> {{ tarea.descripcion }}</p>
+    <p><strong>Fecha de Entrega:</strong> {{ tarea.fecha_entrega }}</p>
+
+    <!-- Listado de Entregas -->
+    <h3 class="mt-4">Entregas de los Estudiantes:</h3>
+    <div class="table-responsive">
+    {% if entregas %}
+        <table class="table table-hover">
+            <thead>
+                <tr class="table-dark">
+                    <th>Estudiante</th>
+                    <th>Fecha de Entrega</th>
+                    <th>Archivo</th>
+                    <th>Tarea</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entrega in entregas %}
+                <tr>
+                    <td>{{ entrega.estudiante.last_name }} {{ entrega.estudiante.first_name }}</td>
+                    <td>{{ entrega.fecha_entrega|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if entrega.archivo %}
+                            <b style="color:rgb(111, 112, 112)">Ver:</b>&nbsp;<a href="{{ entrega.archivo.url }}" target="_blank">{{ entrega.archivo.name }}</a>
+                        {% else %} 
+                            <b>Ningún archivo</b>
+                        {% endif %}
+                        <!-- <td><a href="{{ entrega.archivo }}" class="btn btn-warning btn-sm" download>Descargar</a></td> -->
+                    <td>{{ entrega.comentario|default:"Sin comentario" }}</td>
+                    <td>
+                        {% if entrega.retroalimentaciones.exists %}
+                            <a href="{% url 'verRetroalimentacion' entrega.id %}" class="btn btn-outline-primary btn-sm"><i class="fas fa-eye text-primary"></i>&nbsp;Retroalimentación</a>
+                        {% else %}
+                            <a href="{% url 'retroalimentarEntrega' entrega.id %}" class="btn btn-outline-primary btn-sm">Agregar Retroalimentación</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay entregas realizadas para esta tarea.</p>
+    {% endif %}
+</div>
+</div>
+{% endblock %}

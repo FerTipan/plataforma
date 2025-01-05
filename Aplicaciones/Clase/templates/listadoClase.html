@@ -1,0 +1,87 @@
+{% extends "./plantilla.html" %}
+{% load static%}
+{% block body %}
+
+<!-- Header Start -->
+<div class="container-fluid bg-primary py-2 mb-5 page-header">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <h1 class="display-3 text-white animated slideInDown">Clases Disponibles</h1>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb justify-content-center">
+                        <li class="breadcrumb-item"><a class="text-white" href="{% url 'dashboard_maestro' %}">Inicio</a></li>
+                        <li class="breadcrumb-item text-white active" aria-current="page">Clases Disponibles</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Header End -->
+<style>
+    .card {
+        border: 1px solid #dddddd;
+        border-radius: 10px;
+        padding: 20px 30px 20px 30px;
+    }
+    .card h5 {
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    .ratio {
+        margin-top: 15px;
+    }
+</style>
+<div class="container-xxl py-50" id="courses-available">
+    <div class="container">
+        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h6 class="section-title bg-white text-center text-primary px-3">Clases</h6>
+        </div>
+        <div class="row g-4 justify-content-center">
+            {% for clase in clases %}
+            <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                <div class="course-item bg-light">
+                    <div class="position-relative overflow-hidden">
+                        <img class="img-fluid" src="{% static 'plantilla/elearning/img/course-2.jpg' %}" alt="">
+                        <div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
+                            <a href="{% url 'detalleClase' clase.id %}" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 0px 30px 0 30px;">Ver Detalles</a>
+                        </div>
+                    </div>
+                    <div class="text-center p-4 pb-0">
+                        <div class="mb-3">
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small class="fa fa-star text-primary"></small>
+                            <small>(123)</small>
+                        </div>
+                        <h5 class="mb-4">{{ clase.titulo }}</h5>
+                        <b class="text-primary">Acciones</b><br>
+                        <a class="btn btn-light d-grid" style="border-color: rgb(218, 213, 213);" href="{% url 'verMaterial' clase.id %}"><i class="fas fa-eye"></i>&nbsp;Ver Materiales</a>
+                        <a class="btn btn-primary d-grid" href="{% url 'listaTareas' clase.id %}"><i class="fas fa-eye text-light"></i>&nbsp;Ver Tareas</a>
+                        {% if es_maestro %}
+                            <a class="btn btn-outline-primary d-grid" href="{% url 'nuevoMaterial' clase.id %}"><i class="fas fa-edit"></i>
+                                &nbsp; Agregar Material</a>
+                            <a class="btn btn-outline-success d-grid" href="{% url 'nuevaTarea' clase.id %}"><i class="fas fa-edit"></i>
+                                &nbsp; Agregar Tarea</a>
+                            <!--<a class="btn btn-light d-grid" href="#"><i class="fas fa-clock"></i>
+                                &nbsp; Agregar Video de Clases</a> -->
+                        {% endif %}
+                        <hr>
+                        <p class="card-text">{{ clase.descripcion }}</p>
+                    </div>
+                    <div class="d-flex border-top">
+                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-user-tie text-primary me-2"></i><b class="text-black">Maestro: </b>{{ clase.maestro.username }}</small>
+                        <small class="flex-fill text-center border-end py-2"><i class="fa fa-clock text-primary me-2"></i>2 Hrs</small>
+                    </div>
+                </div>
+            </div>
+            <br>
+            {% endfor %}  
+        </div> 
+    </div>
+</div>
+<br><br>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "plantilla.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Eliminar Material</h1>
+    <p>¿Estás seguro de que deseas eliminar el material <strong>{{ material.titulo }}</strong>?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'listadoClase' %}" class="btn btn-outline-success">Cancelar</a>
+    </form>
+</div>
+<br>
+{% endblock %}

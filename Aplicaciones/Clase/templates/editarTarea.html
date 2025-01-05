@@ -1,0 +1,65 @@
+{% extends "./plantilla.html" %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1>Editar Tarea</h1>
+    <form method="post" id="frm_edit_task">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título</label>
+            <input type="text" id="titulo" name="titulo" class="form-control" value="{{ tarea.titulo }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea id="descripcion" name="descripcion" class="form-control" rows="3" required>{{ tarea.descripcion }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="fecha_entrega" class="form-label">Fecha de Entrega</label>
+            <input type="date" id="fecha_entrega" name="fecha_entrega" class="form-control" value="{{ tarea.fecha_entrega |date:'Y-m-d'}}" >
+        </div>
+        <button type="submit" class="btn btn-warning">Guardar Cambios</button>
+        <a href="{% url 'listaTareas' tarea.clase.id %}" class="btn btn-danger">Cancelar</a>
+    </form>
+    <br><br>
+</div>
+<script>
+    $("#frm_edit_task").validate({
+    rules: {
+        "titulo": {
+            required: true,
+            minlength: 3
+        },
+        "descripcion": {
+            required: true,
+            maxlength: 500
+        },
+        "fecha_entrega": {
+            required: true,
+            date: true
+        },
+    },
+    messages: {
+        "titulo": {
+            required: "Por favor, ingresa un título para la tarea.",
+            minlength: "El título debe tener al menos 3 caracteres."
+        },
+        "descripcion": {
+            required: "Por favor, ingresa la descripción para la tarea.",
+            maxlength: "La descripción no puede exceder los 500 caracteres."
+        },
+        "fecha_entrega": {
+            required: "Por favor, selecciona una fecha de entrega.",
+            date: "Por favor, ingresa una fecha válida."
+        },
+    },
+    errorClass: "text-danger",
+    errorElement: "small",
+    highlight: function(element) {
+        $(element).addClass("is-invalid");
+    },
+    unhighlight: function(element) {
+        $(element).removeClass("is-invalid");
+    }
+});
+</script>
+{% endblock %}

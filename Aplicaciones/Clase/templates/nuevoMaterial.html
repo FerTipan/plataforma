@@ -1,0 +1,66 @@
+{% extends "plantilla.html" %}
+{% block body %}
+<div class="container mt-4">
+    <h1>Agregar Nuevo Material a {{ clase.titulo }}</h1>
+    <form method="post" enctype="multipart/form-data" id="form_nuevo_material">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título del Material</label>
+            <input type="text" id="titulo" name="titulo" class="form-control" >
+        </div>
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea id="descripcion" name="descripcion" class="form-control" rows="4"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="archivo" class="form-label">Archivo</label>
+            <input type="file" id="archivo" name="archivo" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Agregar Material</button>
+
+        <a href="{% url 'listadoClase' %}" class="btn btn-danger">Cancelar</a>
+    </form>
+    <br><br>
+</div>
+
+<script>
+    $("#form_nuevo_material").validate({
+    rules: {
+        "titulo": {
+            required: true,
+            minlength: 3,
+            maxlength: 255
+        },
+        "descripcion": {
+            required: true,
+            minlength: 10,
+        },
+        "archivo": {
+            required: true,
+        },
+    },
+    messages: {
+        "titulo": {
+            required: "Por favor, ingresa un título.",
+            minlength: "El título debe tener al menos 3 caracteres.",
+            maxlength: "El título no puede exceder los 255 caracteres."
+        },
+        "descripcion": {
+            required: "Por favor, ingresa una descripción.",
+            minlength: "La descripción debe tener al menos 10 caracteres.",
+        },
+        "archivo": {
+            required: "Por favor, ingresa un archivo.",
+        },
+    },
+    errorClass: "text-danger",
+    errorElement: "small",
+    highlight: function(element) {
+        $(element).addClass("is-invalid");
+    },
+    unhighlight: function(element) {
+        $(element).removeClass("is-invalid");
+    }
+});
+</script>
+{% endblock %}

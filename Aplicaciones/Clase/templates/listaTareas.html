@@ -1,0 +1,34 @@
+{% extends "./plantilla.html" %}
+{% block body %}
+<div class="container mt-4">
+    <h1 class="mb-4">Tareas Asignadas: {{ clase.titulo }}</h1>
+    <p>{{ clase.descripcion }}</p>
+
+    <a href="{% url 'nuevaTarea' clase.id %}" class="btn btn-primary">Agregar Nueva Tarea</a>
+    <a href="{% url 'listadoClase' %}" class="btn btn-outline-success">Volver</a>
+    <br>
+    {% if tareas %}
+    <br>
+        <div class="list-group">
+            {% for tarea in tareas %}
+                <div class="list-group-item mb-3 shadow">
+                    <h5 class="mb-2">{{ tarea.titulo }}</h5>
+                    <p><strong>Descripción:</strong> {{ tarea.descripcion }}</p>
+                    <p><strong>Fecha de Entrega:</strong> {{ tarea.fecha_entrega }}</p>
+
+                    <!-- Opciones para Maestros -->
+                    {% if user.es_maestro %}
+                        <a href="{% url 'detalleTarea' tarea.id %}" class="btn btn-info btn-sm">Ver Entregas</a> 
+                        <a href="{% url 'editarTarea' tarea.id %}" class="btn btn-warning btn-sm">Editar</a>
+                        <a href="{% url 'eliminarTarea' tarea.id %}" class="btn btn-danger btn-sm">Eliminar</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">No hay tareas registradas para esta clase.</p>
+    {% endif %}
+   
+</div>
+<br>
+{% endblock %}
